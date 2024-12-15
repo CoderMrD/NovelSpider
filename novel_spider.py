@@ -16,7 +16,7 @@ i360xs_Info = {
     },
     'base_url': 'https://m.i360xs.com/book',
     'host': 'https://m.i360xs.com',
-    'url': 'https://m.i360xs.com/book/105017/128708245.html',
+    'url': 'https://m.i360xs.com/book/105017/132246515.html',
     'title_xpath': '/html/body/form/div[@class="readMain"]/div[@id="readercontainer"]/div/h3',
     'content_xpath': '/html/body/form/div[@class="readMain"]/div[@id="readercontainer"]/div/div//p/text()',
     'next_page_xpath': '/html/body/form/div[@class="readMain"]/div/img/@onerror',
@@ -46,7 +46,8 @@ class NovelSpider:
             url = self.url
         startTime = datetime.datetime.now()
         res = requests.get(url, headers=self.headers)
-        # print((datetime.datetime.now() - startTime).seconds)
+        import math
+        print('耗时: ', math.ceil((datetime.datetime.now() - startTime).microseconds / 1000),' ms')
         return res.text
 
     def _get_tree(self, html=''):
@@ -67,7 +68,7 @@ class NovelSpider:
             for i in content_array:
                 if '点击下一页翻页继续阅读' in i:
                     url = self.base_url + '/' + self.get_next_url(tree)
-                    time.sleep(1)
+                    time.sleep(0.1)
                     res = self.request(url)
                     self.get_content(self._get_tree(res))
                 elif '本章节完结' in i:
@@ -96,6 +97,7 @@ class NovelSpider:
             print(title)
             self.get_content(tree)
             self.write_to_file(title, self.content)
+            self.content = ''
 
 
 i360Novel = NovelSpider(i360xs_Info)
